@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมที่ 1: เลือกให้ถูก แชร์ให้เป็น</title>
+    <!-- Google Fonts: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --accent: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fbcfe8 0%, #c7d2fe 50%, #bae6fd 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 10s ease infinite;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+        }
+
+        /* Header */
+        .game-header {
+            background: linear-gradient(135deg, #4f46e5, #ec4899, #f59e0b);
+            background-size: 200% 200%;
+            animation: gradientBG 6s ease infinite;
+            color: white;
+            padding: 22px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .game-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Body */
+        .game-body {
+            padding: 25px 30px;
+            flex: 1;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.97) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Welcome Screen */
+        .welcome-content {
+            text-align: center;
+            padding: 25px 0;
+        }
+
+        .welcome-icon-group {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            animation: floatIcons 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatIcons {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .welcome-content h2 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #4f46e5, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .welcome-content p {
+            color: #475569;
+            font-size: 1.1rem;
+            max-width: 680px;
+            margin: 0 auto 35px auto;
+            line-height: 1.7;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4f46e5, #a855f7);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.6);
+            background: linear-gradient(135deg, #4338ca, #9333ea);
+        }
+
+        /* Question Screen */
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #4f46e5;
+            font-size: 1.1rem;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #fdf4ff, #e0e7ff);
+            border: 2px solid #f472b6;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.1);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #1e293b;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            border-color: #ec4899;
+            background: linear-gradient(135deg, #fce7f3, #e0e7ff);
+            color: #db2777;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.25);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        .option-btn.selected .option-letter {
+            background: #ec4899;
+            color: white;
+        }
+
+        /* Result Screen Styles */
+        .result-container {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .result-container h2 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .final-score-box {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin: 15px 0;
+            background: linear-gradient(135deg, #e0e7ff, #fce7f3);
+            padding: 18px;
+            border-radius: 20px;
+            border: 2px dashed #ec4899;
+            display: inline-block;
+            min-width: 280px;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
+        }
+
+        .stats-summary-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #10b981, #059669);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .review-section {
+            text-align: left;
+            margin-top: 25px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .review-card {
+            background: white;
+            border-left: 6px solid #4f46e5;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border-top: 1px solid #f1f5f9;
+            border-right: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .review-card.correct-ans {
+            border-left-color: #10b981;
+            background: linear-gradient(to right, #f0fdf4, #ffffff);
+        }
+
+        .review-card.wrong-ans {
+            border-left-color: #ef4444;
+            background: linear-gradient(to right, #fef2f2, #ffffff);
+        }
+
+        .review-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .review-desc {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="game-title">
+                <h1><i class="fa-solid fa-laptop-code"></i> เกมที่ 1: เลือกให้ถูก แชร์ให้เป็น</h1>
+            </div>
+            <div class="game-stats" id="game-stats" style="display: none;">
+                <div class="stat-badge"><i class="fa-solid fa-star" style="color: #fde047;"></i> คะแนน: <span id="score-display">0</span>/50</div>
+                <div class="stat-badge"><i class="fa-solid fa-clock" style="color: #facc15;"></i> เวลา: <span id="timer-display">15</span>s</div>
+            </div>
+        </header>
+
+        <!-- Body Content -->
+        <div class="game-body">
+            
+            <!-- Welcome Screen -->
+            <div id="welcome-screen" class="screen active">
+                <div class="welcome-content">
+                    <div class="welcome-icon-group">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h2>พร้อมทดสอบทักษะการเลือกและแบ่งปันข้อมูลหรือยัง?</h2>
+                    <p>เลือกวิธีการนำเสนอและแบ่งปันข้อมูล ตลอดจนการใช้เทคโนโลยีสารสนเทศให้เหมาะสมกับสถานการณ์ มีทั้งหมด 10 ข้อ เวลาข้อละ 15 วินาที คะแนนเต็ม 50 คะแนน ระบบจะแสดงเฉลยและเหตุผลทั้งหมดให้ทราบตอนท้ายเกม!</p>
+                    <button class="btn" onclick="startGame()"><i class="fa-solid fa-play"></i> เริ่มต้นเล่นเกม</button>
+                </div>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="screen">
+                <div class="question-header">
+                    <span id="question-number">ข้อที่ 1/10</span>
+                    <span id="question-category" style="color: #ec4899; font-weight: 600;">การนำเสนอข้อมูล</span>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-text" id="question-text">กำลังโหลดคำถาม...</div>
+                </div>
+
+                <div class="options-grid" id="options-grid">
+                    <!-- ตัวเลือกจะถูกสร้างด้วย JavaScript -->
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="screen">
+                <div class="result-container">
+                    <i class="fa-solid fa-trophy" style="font-size: 3.8rem; color: #f59e0b; margin-bottom: 5px; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.3));"></i>
+                    <h2>GAME OVER!</h2>
+                    <div class="final-score-box" id="final-score-text">0 / 50 คะแนน</div>
+                    
+                    <div id="grade-container">
+                        <div class="grade-badge" id="grade-text">ระดับ: ดีมาก</div>
+                    </div>
+
+                    <div class="stats-summary-grid">
+                        <div class="stat-card" style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> ตอบถูก: <span id="correct-count">0</span>/10 ข้อ</div>
+                        <div class="stat-card" style="color: #ef4444;"><i class="fa-solid fa-circle-xmark"></i> ตอบผิด/หมดเวลา: <span id="wrong-count">0</span>/10 ข้อ</div>
+                        <div class="stat-card" style="color: #4f46e5;"><i class="fa-solid fa-stopwatch"></i> เวลาที่ใช้: <span id="total-time-text">0</span> วินาที</div>
+                    </div>
+                    
+                    <div style="text-align: left; font-weight: 700; margin-top: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b;">
+                        <i class="fa-solid fa-clipboard-list" style="color: #4f46e5;"></i> เฉลยและเหตุผลประจำข้อ:
+                    </div>
+                    
+                    <div class="review-section" id="review-container">
+                        <!-- รายละเอียดเฉลยแต่ละข้อจะถูกสร้างตรงนี้ -->
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <button class="btn" onclick="restartGame()"><i class="fa-solid fa-rotate-right"></i> เล่นใหม่อีกครั้ง</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ฐานข้อมูลคำถาม 10 ข้อ
+        const questions = [
+            {
+                id: 1,
+                category: "การประชาสัมพันธ์",
+                text: "โรงเรียนต้องการประชาสัมพันธ์กิจกรรมวันวิทยาศาสตร์ให้นักเรียน ม.6 จำนวนมากทราบ ควรเลือกวิธีใดเหมาะสมที่สุด?",
+                options: [
+                    "เก็บข้อมูลไว้ในเครื่องตนเอง",
+                    "ส่งข้อความให้เพื่อนเพียงคนเดียว",
+                    "จัดทำอินโฟกราฟิกและเผยแพร่ผ่านช่องทางของโรงเรียน",
+                    "ไม่ต้องนำเสนอข้อมูล"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "อินโฟกราฟิกช่วยนำเสนอข้อมูลสำคัญให้เข้าใจง่าย และสามารถเผยแพร่ให้กลุ่มเป้าหมายจำนวนมากได้"
+            },
+            {
+                id: 2,
+                category: "เครื่องมือโครงงาน",
+                text: "นักเรียนต้องนำเสนอผลการทำโครงงานหน้าชั้นเรียน โดยมีทั้งข้อความ รูปภาพ และข้อมูลสถิติ ควรเลือกใช้เครื่องมือใด?",
+                options: [
+                    "โปรแกรมนำเสนอ",
+                    "เครื่องคิดเลข",
+                    "โปรแกรมบันทึกเสียงอย่างเดียว",
+                    "โปรแกรมจัดการไฟล์"
+                ],
+                correctIndex: 0, // ก. (Index 0)
+                explanation: "โปรแกรมนำเสนอสามารถจัดข้อความ รูปภาพ ตาราง และข้อมูลสถิติให้อยู่ในรูปแบบที่เหมาะกับการนำเสนอ"
+            },
+            {
+                id: 3,
+                category: "การนำเสนอข้อมูลสถิติ",
+                text: "ถ้านักเรียนต้องการนำเสนอข้อมูลสถิติของนักเรียนจำนวน 500 คนให้เข้าใจง่ายและรวดเร็ว ควรใช้รูปแบบใด?",
+                options: [
+                    "ข้อความยาวหลายหน้า",
+                    "อินโฟกราฟิกหรือกราฟ",
+                    "ส่งข้อมูลให้เพื่อนทีละคน",
+                    "เก็บข้อมูลไว้โดยไม่เผยแพร่"
+                ],
+                correctIndex: 1, // ข. (Index 1)
+                explanation: "อินโฟกราฟิกหรือกราฟช่วยสรุปข้อมูลจำนวนมากให้เห็นภาพและเข้าใจได้ง่ายขึ้น"
+            },
+            {
+                id: 4,
+                category: "การแบ่งปันข้อมูล",
+                text: "นักเรียนต้องการแบ่งปันเอกสารการเรียนให้เฉพาะสมาชิกในห้องเรียน ควรเลือกวิธีใด?",
+                options: [
+                    "โพสต์แบบสาธารณะให้ทุกคนเห็น",
+                    "ส่งให้คนที่ไม่เกี่ยวข้อง",
+                    "ใช้ช่องทางออนไลน์ที่จำกัดเฉพาะสมาชิกในห้อง",
+                    "เผยแพร่ข้อมูลโดยไม่กำหนดผู้เข้าถึง"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "การจำกัดผู้เข้าถึงช่วยให้การแบ่งปันข้อมูลเหมาะสมกับกลุ่มเป้าหมายและลดความเสี่ยงด้านข้อมูล"
+            },
+            {
+                id: 5,
+                category: "ความน่าเชื่อถือของข้อมูล",
+                text: "ก่อนนำข้อมูลจากเว็บไซต์มาใช้ในการนำเสนอ นักเรียนควรทำสิ่งใดก่อน?",
+                options: [
+                    "คัดลอกข้อมูลทันที",
+                    "ตรวจสอบความถูกต้องและแหล่งที่มาของข้อมูล",
+                    "ลบชื่อผู้จัดทำข้อมูลออก",
+                    "เปลี่ยนข้อมูลให้ตรงกับความต้องการของตนเอง"
+                ],
+                correctIndex: 1, // ข. (Index 1)
+                explanation: "ควรตรวจสอบข้อมูลและแหล่งที่มาก่อนนำไปใช้ เพื่อให้ข้อมูลที่นำเสนอมีความถูกต้องและน่าเชื่อถือ"
+            },
+            {
+                id: 6,
+                category: "การวิเคราะห์ผู้รับสาร",
+                text: "หากต้องนำเสนอข้อมูลให้กับนักเรียนระดับมัธยมศึกษาตอนปลาย สิ่งใดควรพิจารณาเป็นสำคัญ?",
+                options: [
+                    "จำนวนข้อมูลต้องมากที่สุด",
+                    "ความเหมาะสมของเนื้อหาและกลุ่มเป้าหมาย",
+                    "ใช้รูปแบบเดียวกับทุกกลุ่ม",
+                    "ใช้ข้อความให้มากที่สุด"
+                ],
+                correctIndex: 1, // ข. (Index 1)
+                explanation: "การนำเสนอข้อมูลควรคำนึงถึงผู้รับสารและเลือกเนื้อหา รูปแบบ และภาษาที่เหมาะสมกับกลุ่มเป้าหมาย"
+            },
+            {
+                id: 7,
+                category: "การตรวจสอบข่าวสาร",
+                text: "นักเรียนได้รับข้อความว่า “พรุ่งนี้โรงเรียนหยุดเรียน” จากเพื่อน แต่ยังไม่มีประกาศจากโรงเรียน นักเรียนควรทำอย่างไร?",
+                options: [
+                    "แชร์ต่อทันที",
+                    "เปลี่ยนข้อความแล้วแชร์",
+                    "ตรวจสอบข้อมูลจากแหล่งที่น่าเชื่อถือก่อน",
+                    "ส่งต่อให้คนอื่นช่วยแชร์"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "ควรตรวจสอบข้อมูลจากแหล่งที่น่าเชื่อถือก่อนนำไปเผยแพร่ เพื่อป้องกันการส่งต่อข้อมูลที่ไม่ถูกต้อง"
+            },
+            {
+                id: 8,
+                category: "จริยธรรมการแบ่งปันข้อมูล",
+                text: "ข้อใดเป็นการแบ่งปันข้อมูลที่เหมาะสมที่สุด?",
+                options: [
+                    "นำข้อมูลส่วนตัวของเพื่อนมาโพสต์โดยไม่ขออนุญาต",
+                    "แชร์ข้อมูลที่ยังไม่ทราบแหล่งที่มา",
+                    "เผยแพร่ผลงานของตนเองผ่านช่องทางที่เหมาะสม",
+                    "ส่งข้อมูลส่วนตัวของผู้อื่นให้บุคคลทั่วไป"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "การเผยแพร่ผลงานของตนเองผ่านช่องทางที่เหมาะสมเป็นการแบ่งปันข้อมูลอย่างมีความรับผิดชอบ"
+            },
+            {
+                id: 9,
+                category: "ประสิทธิภาพการนำเสนอ",
+                text: "ข้อใดแสดงถึงการนำเสนอข้อมูลที่มีประสิทธิภาพมากที่สุด?",
+                options: [
+                    "ใช้ข้อมูลจำนวนมากโดยไม่จัดลำดับ",
+                    "ใช้ข้อความที่ซับซ้อนและยาวที่สุด",
+                    "นำเสนอข้อมูลถูกต้อง ชัดเจน และเหมาะสมกับผู้รับสาร",
+                    "ใช้ภาพจำนวนมากโดยไม่เกี่ยวข้องกับเนื้อหา"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "การนำเสนอที่ดีควรทำให้ผู้รับสารเข้าใจข้อมูลได้ง่าย โดยคำนึงถึงความถูกต้อง ความชัดเจน และความเหมาะสม"
+            },
+            {
+                id: 10,
+                category: "เกณฑ์การเผยแพร่ข้อมูล",
+                text: "นักเรียนพบข้อมูลข่าวสารบนสื่อออนไลน์และต้องการนำไปเผยแพร่ต่อ ข้อใดควรพิจารณาก่อนเผยแพร่?",
+                options: [
+                    "จำนวนคนที่กดถูกใจ",
+                    "ความสวยงามของโพสต์",
+                    "ความถูกต้อง ความน่าเชื่อถือ และความเหมาะสมของข้อมูล",
+                    "จำนวนครั้งที่มีคนแชร์"
+                ],
+                correctIndex: 2, // ค. (Index 2)
+                explanation: "จำนวนการถูกใจหรือการแชร์ไม่ได้ยืนยันว่าข้อมูลถูกต้อง ควรพิจารณาความถูกต้องและความน่าเชื่อถือก่อนเผยแพร่"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timeLeft = 15;
+        let timerInterval;
+        let startTime = 0;
+        let totalTimeSpent = 0;
+        let userAnswersHistory = [];
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            userAnswersHistory = [];
+            startTime = Date.now();
+            
+            document.getElementById('welcome-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('quiz-screen').classList.add('active');
+            document.getElementById('game-stats').style.display = 'flex';
+
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 15;
+            document.getElementById('timer-display').innerText = timeLeft;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-display').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // หมดเวลา = ไม่ตอบ (นับเป็นผิด/ไม่ได้คะแนน)
+                    handleAnswer(-1);
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            startTimer();
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-number').innerText = `ข้อที่ ${currentQuestionIndex + 1}/10`;
+            document.getElementById('question-category').innerText = `หมวดหมู่: ${q.category}`;
+            document.getElementById('question-text').innerText = q.text;
+
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+
+            const letters = ['ก', 'ข', 'ค', 'ง'];
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<div class="option-letter">${letters[idx]}</div> <span>${optText}</span>`;
+                btn.onclick = () => handleAnswer(idx);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex) {
+            clearInterval(timerInterval);
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedIndex === q.correctIndex);
+
+            let earned = 0;
+            if (isCorrect) {
+                earned = 5;
+                score += earned;
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+
+            document.getElementById('score-display').innerText = score;
+
+            // บันทึกประวัติเพื่อนำไปแสดงผลเฉลยท้ายเกม
+            const letters = ['ก', 'ข', 'ค', 'ง'];
+            userAnswersHistory.push({
+                no: currentQuestionIndex + 1,
+                text: q.text,
+                options: q.options,
+                userAnswer: selectedIndex !== -1 ? `${letters[selectedIndex]}. ${q.options[selectedIndex]}` : "หมดเวลา / ไม่ได้ตอบ",
+                correctAnswer: `${letters[q.correctIndex]}. ${q.options[q.correctIndex]}`,
+                isCorrect: isCorrect,
+                earned: earned,
+                explanation: q.explanation
+            });
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                totalTimeSpent = Math.floor((Date.now() - startTime) / 1000);
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            document.getElementById('quiz-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            document.getElementById('game-stats').style.display = 'none';
+
+            document.getElementById('final-score-text').innerText = `${score} / 50 คะแนน`;
+            document.getElementById('correct-count').innerText = correctCount;
+            document.getElementById('wrong-count').innerText = wrongCount;
+            document.getElementById('total-time-text').innerText = totalTimeSpent;
+
+            // จัดระดับผลการเล่นตามเกณฑ์
+            let gradeText = "";
+            let gradeColor = "";
+            if (score >= 40) {
+                gradeText = "🥇 40–50 คะแนน : ดีมาก";
+                gradeColor = "linear-gradient(135deg, #10b981, #059669)";
+            } else if (score >= 30) {
+                gradeText = "🥈 30–39 คะแนน : ดี";
+                gradeColor = "linear-gradient(135deg, #3b82f6, #1d4ed8)";
+            } else if (score >= 20) {
+                gradeText = "🥉 20–29 คะแนน : พอใช้";
+                gradeColor = "linear-gradient(135deg, #f59e0b, #d97706)";
+            } else {
+                gradeText = "🔄 0–19 คะแนน : ควรทบทวนความรู้";
+                gradeColor = "linear-gradient(135deg, #ef4444, #dc2626)";
+            }
+
+            const gradeBadge = document.getElementById('grade-text');
+            gradeBadge.innerText = gradeText;
+            gradeBadge.style.background = gradeColor;
+
+            // สร้างรายการเฉลย
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            userAnswersHistory.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `review-card ${item.isCorrect ? 'correct-ans' : 'wrong-ans'}`;
+                
+                card.innerHTML = `
+                    <div class="review-title">
+                        <span style="color: #1e293b;">ข้อที่ ${item.no}: ${item.isCorrect ? '✅ ตอบถูก (+5)' : '❌ ตอบผิด (0)'}</span>
+                        <span style="color: #4f46e5;">คะแนนสะสม: ${item.earned}</span>
+                    </div>
+                    <div style="font-size: 0.88rem; color: #334155; font-weight: 500;">คำถาม: "${item.text}"</div>
+                    <div class="review-desc">
+                        <b>คำตอบของคุณ:</b> ${item.userAnswer}<br>
+                        <b>✅ คำตอบที่ถูกต้อง:</b> ${item.correctAnswer}<br>
+                        <b>💡 เหตุผล:</b> ${item.explanation}
+                    </div>
+                `;
+                reviewContainer.appendChild(card);
+            });
+        }
+
+        function restartGame() {
+            startGame();
+        }
+    </script>
+</body>
+</html>
